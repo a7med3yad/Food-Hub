@@ -80,7 +80,9 @@ Food-Hub/
 └── index.html          # HTML template
 ```
 
-## Deployment
+## Deployment to Netlify
+
+This project is configured specifically for **Netlify** deployment. All configuration files are ready to use.
 
 ### Build for Production
 
@@ -90,85 +92,52 @@ npm run build
 
 This creates an optimized production build in the `dist` directory.
 
-### Deploy to Vercel
-
-1. Install Vercel CLI:
-```bash
-npm i -g vercel
-```
-
-2. Deploy:
-```bash
-vercel
-```
-
 ### Deploy to Netlify
 
 #### Option 1: Using Netlify Dashboard (Recommended)
 
-1. Push your code to GitHub/GitLab/Bitbucket
+1. **Push your code** to GitHub, GitLab, or Bitbucket
 2. Go to [Netlify](https://www.netlify.com/) and sign in
-3. Click "Add new site" → "Import an existing project"
+3. Click **"Add new site"** → **"Import an existing project"**
 4. Connect your repository
-5. Netlify will auto-detect the settings:
+5. Netlify will automatically detect the settings from `netlify.toml`:
    - **Build command**: `npm run build`
    - **Publish directory**: `dist`
-6. Click "Deploy site"
+   - **Node version**: 18
+6. Click **"Deploy site"**
 
-The `netlify.toml` file is already configured, so Netlify will automatically:
-- Use the correct build command
-- Set the publish directory
-- Handle SPA routing with redirects
+✅ **No configuration needed** - `netlify.toml` handles everything automatically!
 
 #### Option 2: Using Netlify CLI
 
-1. Install Netlify CLI:
+1. **Install Netlify CLI**:
 ```bash
-npm i -g netlify-cli
+npm install -g netlify-cli
 ```
 
-2. Login to Netlify:
+2. **Login to Netlify**:
 ```bash
 netlify login
 ```
 
-3. Initialize and deploy:
+3. **Deploy**:
 ```bash
-netlify init
-# Follow the prompts, or use:
+npm run deploy
+# or
 netlify deploy --prod
 ```
 
-The project is already configured with `netlify.toml`, so it will work automatically!
+### What's Configured
 
-### Deploy to GitHub Pages
+The project includes:
+- ✅ `netlify.toml` - Build settings and redirects
+- ✅ `public/_redirects` - SPA routing support
+- ✅ TypeScript build configuration
+- ✅ Production optimizations
 
-1. Install gh-pages:
-```bash
-npm install --save-dev gh-pages
-```
+### SPA Routing
 
-2. Add to package.json:
-```json
-"scripts": {
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d dist"
-}
-```
-
-3. Deploy:
-```bash
-npm run deploy
-```
-
-### Deploy to Any Static Host
-
-1. Build the project:
-```bash
-npm run build
-```
-
-2. Upload the `dist` folder contents to your static hosting service (AWS S3, Cloudflare Pages, etc.)
+React Router client-side routing is fully configured. All routes (like `/restaurant/1`, `/checkout`, etc.) will work correctly on Netlify thanks to the redirect rules in `netlify.toml` and `public/_redirects`.
 
 ## Environment Variables
 
