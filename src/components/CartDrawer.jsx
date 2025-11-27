@@ -1,91 +1,96 @@
 // src/components/CartDrawer.jsx
-// درج السلة - يعرض الأصناف اللي المستخدم اختارها
 import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import CheckoutModal from './CheckoutModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
-import usePortalRoot from '../hooks/usePortalRoot';
-import { getImagePath } from '../utils/imagePath';
 
-// درج السلة - يعرض الأصناف اللي المستخدم اختارها
-const CartDrawer = ({ isOpen, onClose }) => {
-  const { cart, updateCartQuantity } = useAppContext();
+const CartDrawer = () => {
+  const { cart, updateCartQuantity, currentUser } = useAppContext();
+  const [isOpen, setIsOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const portalRoot = usePortalRoot();
+  const navigate = useNavigate();
 
-  // حساب الإجمالي
   const subtotal = cart.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
   const deliveryFee = 2.99;
   const total = subtotal + deliveryFee;
 
   useEffect(() => {
-    if (!isOpen) return;
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose?.();
+      if (e.key === 'Escape') setIsOpen(false);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, []);
 
-  const drawer = (
-    isOpen && (
-      <div
-        className="fixed inset-0 z-[60]"
-        onClick={onClose}
+  return (
+    <>
+      <button
+        className="relative p-2 border border-border-color rounded-lg text-text-dark hover:bg-bg-gray transition"
+        onClick={() => setIsOpen(true)}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur"></div>
+        <FontAwesomeIcon icon={faShoppingCart} className="text-xl" />
+        {cart.length > 0 && (
+          <span className="absolute -top-1 -right-1 bg-primary-orange text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+            {cart.reduce((sum, item) => sum + item.quantity, 0)}
+          </span>
+        )}
+      </button>
+
+      {isOpen && (
         <div
-          className="absolute top-0 right-0 bottom-0 w-full max-w-md overflow-y-auto bg-white shadow-xl transition-colors dark:bg-slate-900"
-          onClick={(e) => e.stopPropagation()}
+          className="fixed inset-0 z-50"
+          onClick={() => setIsOpen(false)}
         >
-            <div className="flex items-center justify-between border-b border-border-color/80 p-5 dark:border-slate-800">
-              <h2 className="text-xl font-bold text-text-dark dark:text-white">Shopping Cart</h2>
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+          <div
+            className="absolute top-0 right-0 bottom-0 w-full max-w-md bg-white shadow-xl overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-border-color flex justify-between items-center">
+              <h2 className="text-xl font-bold">Shopping Cart</h2>
               <button
-                className="p-1 text-text-gray hover:text-text-dark dark:text-slate-400 dark:hover:text-white"
-                onClick={onClose}
+                className="p-1 text-text-gray hover:text-text-dark"
+                onClick={() => setIsOpen(false)}
               >
                 <FontAwesomeIcon icon={faTimes} className="text-2xl" />
               </button>
             </div>
 
-            <div className="p-5 text-text-dark dark:text-slate-100">
+            <div className="p-5">
               {cart.length === 0 ? (
-                <div className="py-12 text-center text-text-gray dark:text-slate-400">
+                <div className="text-center py-12 text-text-gray">
                   <FontAwesomeIcon icon={faShoppingCart} className="text-5xl mb-4 block opacity-50" />
                   <p>Your cart is empty</p>
                 </div>
               ) : (
                 <>
                   {cart.map((item) => (
-                    <div key={item.menuItem.id} className="mb-4 flex gap-3 rounded-lg border border-border-color/70 p-3 dark:border-slate-700">
+                    <div key={item.menuItem.id} className="flex gap-3 mb-4 p-3 border border-border-color rounded-lg">
                       <img
-                        src={getImagePath(item.menuItem.image)}
+                        src={item.menuItem.image}
                         alt={item.menuItem.name}
                         className="w-16 h-16 object-cover rounded"
                         onError={(e) => {
-                          if (e.target.src && !e.target.src.includes('data:image')) {
-                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect fill="%23e5e7eb" width="64" height="64"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="10" dy="7" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
-                            e.target.alt = 'No Image';
-                          }
+                          e.target.src = 'https://via.placeholder.com/150?text=No+Image';
                         }}
                       />
                       <div className="flex-1">
                         <div className="font-medium">{item.menuItem.name}</div>
-                        <div className="font-semibold text-primary-orange">
+                        <div className="text-primary-orange font-semibold">
                           ${item.menuItem.price.toFixed(2)}
                         </div>
-                        <div className="mt-2 flex items-center gap-2">
+                        <div className="flex items-center gap-2 mt-2">
                           <button
-                            className="flex h-7 w-7 items-center justify-center rounded border border-border-color hover:bg-bg-gray dark:border-slate-700 dark:hover:bg-slate-800"
+                            className="w-7 h-7 border border-border-color rounded flex items-center justify-center hover:bg-bg-gray"
                             onClick={() => updateCartQuantity(item.menuItem.id, item.quantity - 1)}
                           >
                             -
                           </button>
                           <span className="w-8 text-center">{item.quantity}</span>
                           <button
-                            className="flex h-7 w-7 items-center justify-center rounded border border-border-color hover:bg-bg-gray dark:border-slate-700 dark:hover:bg-slate-800"
+                            className="w-7 h-7 border border-border-color rounded flex items-center justify-center hover:bg-bg-gray"
                             onClick={() => updateCartQuantity(item.menuItem.id, item.quantity + 1)}
                           >
                             +
@@ -101,15 +106,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     </div>
                   ))}
 
-                  <div className="mt-4 border-t border-border-color/80 pt-4 dark:border-slate-800">
+                  <div className="border-t border-border-color pt-4 mt-4">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total:</span>
                       <span>${total.toFixed(2)}</span>
                     </div>
                     <button
-                      className="mt-4 w-full rounded-lg bg-primary-orange py-2 font-medium text-white transition hover:bg-primary-orange-dark"
+                      className="w-full mt-4 bg-primary-orange text-white py-2 rounded-lg font-medium hover:bg-primary-orange-dark transition"
                       onClick={() => {
-                        onClose?.();
+                        setIsOpen(false);
                         setTimeout(() => setIsCheckoutOpen(true), 300);
                       }}
                     >
@@ -119,14 +124,10 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 </>
               )}
             </div>
+          </div>
         </div>
-      </div>
-    )
-  );
+      )}
 
-  return (
-    <>
-      {portalRoot && drawer && createPortal(drawer, portalRoot)}
       <CheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
