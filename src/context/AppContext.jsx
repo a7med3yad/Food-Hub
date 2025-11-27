@@ -1,7 +1,7 @@
 // src/context/AppContext.jsx
+// هنا بنحفظ كل الـ state بتاع التطبيق ونستخدم Context API عشان نوصل للداتا من أي مكان
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { mockRestaurants, mockMenuItems } from '../data/mockData';
-
 
 const AppContext = createContext();
 
@@ -21,7 +21,7 @@ export const AppProvider = ({ children }) => {
   });
   const [isAuthReady, setIsAuthReady] = useState(false);
 
-  // Load from localStorage
+  // بنحفظ الداتا في localStorage عشان لو المستخدم عمل refresh تفضل موجودة
   useEffect(() => {
     const savedUser = localStorage.getItem('foodhub-user');
     const savedCart = localStorage.getItem('foodhub-cart');
@@ -35,7 +35,7 @@ export const AppProvider = ({ children }) => {
     setIsAuthReady(true);
   }, []);
 
-  // Save to localStorage
+  // بنحفظ الداتا في localStorage كل ما تتغير
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem('foodhub-user', JSON.stringify(currentUser));
@@ -62,15 +62,18 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('foodhub-theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
-  // === HELPER FUNCTIONS ===
+  // === Helper Functions ===
 
+  // دالة عشان نعرض رسالة للمستخدم (success أو error)
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
   };
 
+  // تبديل بين الوضع الليلي والنهاري
   const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
+  // حساب متوسط تقييم المطعم
   const getRestaurantRating = (restaurantId) => {
     const restaurantReviews = reviews.filter(r => r.restaurantId === restaurantId);
     if (restaurantReviews.length === 0) return { average: 0, count: 0 };
@@ -78,6 +81,7 @@ export const AppProvider = ({ children }) => {
     return { average, count: restaurantReviews.length };
   };
 
+  // حساب متوسط تقييم الصنف
   const getMenuItemRating = (menuItemId) => {
     const itemReviews = reviews.filter(r => r.menuItemId === menuItemId);
     if (itemReviews.length === 0) return { average: 0, count: 0 };
@@ -98,7 +102,17 @@ export const AppProvider = ({ children }) => {
     const item = mockMenuItems.find(i => i.id === itemId);
     if (!item) return false;
 
+    // لازم نتأكد إن كل الـ items في الـ cart من نفس المطعم
     setCart(prev => {
+      // لو في items في الـ cart، نتأكد إنهم من نفس المطعم
+      if (prev.length > 0) {
+        const firstItemRestaurantId = prev[0].menuItem.restaurantId;
+        if (item.restaurantId !== firstItemRestaurantId) {
+          showToast('Please complete your current order or clear cart to order from another restaurant', 'error');
+          return prev;
+        }
+      }
+
       const existing = prev.find(c => c.menuItem.id === itemId);
       if (existing) {
         return prev.map(c => c.menuItem.id === itemId ? { ...c, quantity: c.quantity + 1 } : c);
@@ -124,9 +138,11 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // دالة تسجيل الدخول - بنحدد الـ role تلقائياً لو مش موجود
   const handleLogin = (user) => {
     const determineRole = () => {
       if (user.role) return user.role;
+      // لو الإيميل admin@demo.com يبقى admin
       if (user.email?.toLowerCase() === 'admin@demo.com') return 'admin';
       return 'customer';
     };

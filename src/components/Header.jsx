@@ -1,4 +1,5 @@
 // src/components/Header.jsx
+// الهيدر بتاع الصفحة - فيه اللوجو والأزرار
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
@@ -13,11 +14,8 @@ const Header = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const isAdmin = currentUser?.role === 'admin';
-  const handleLogoutClick = () => {
-    handleLogout();
-    navigate('/');
-  };
 
+  // عدد الأصناف في السلة
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleLoginClick = () => {
@@ -93,7 +91,10 @@ const Header = () => {
           {currentUser && (
             <button
               className="rounded-lg bg-text-dark px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-black"
-              onClick={handleLogoutClick}
+              onClick={() => {
+                handleLogout();
+                navigate('/');
+              }}
             >
               Logout
             </button>

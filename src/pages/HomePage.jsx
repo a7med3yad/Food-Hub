@@ -1,4 +1,5 @@
 // src/pages/HomePage.jsx
+// الصفحة الرئيسية - عرض المطاعم
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
@@ -9,6 +10,7 @@ const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
+  // بنفلتر المطاعم حسب البحث
   const filteredRestaurants = useMemo(() => {
     if (!searchQuery) return restaurants;
     const q = searchQuery.toLowerCase();

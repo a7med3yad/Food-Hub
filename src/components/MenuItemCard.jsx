@@ -1,7 +1,9 @@
 // src/components/MenuItemCard.jsx
+// كارد الصنف - يعرض صورة الصنف والسعر والوصف
 import React, { useState, useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
 import ItemDetailsModal from './ItemDetailsModal';
+import { getImagePath } from '../utils/imagePath';
 
 const MenuItemCard = ({ item }) => {
   const { addToCart, getMenuItemRating } = useAppContext();
@@ -40,12 +42,14 @@ const MenuItemCard = ({ item }) => {
       >
         <div className="relative h-48 w-full overflow-hidden">
           <img
-            src={item.image}
+            src={getImagePath(item.image)}
             alt={item.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/600x400?text=No+Image';
-              e.target.alt = 'No Image';
+              if (e.target.src && !e.target.src.includes('data:image')) {
+                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400"%3E%3Crect fill="%23e5e7eb" width="600" height="400"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="20" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                e.target.alt = 'No Image';
+              }
             }}
           />
           <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-text-dark dark:bg-slate-900/80 dark:text-slate-100">

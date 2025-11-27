@@ -1,4 +1,5 @@
 // src/pages/HistoryPage.jsx
+// صفحة تاريخ الطلبات - المستخدم يشوف كل طلباته
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import OrderItemReviewModal from '../components/OrderItemReviewModal';
@@ -7,7 +8,7 @@ const HistoryPage = () => {
   const { orders, currentUser } = useAppContext();
   const [reviewTarget, setReviewTarget] = useState(null);
 
-  // Get only current user's orders
+  // بنفلتر الطلبات اللي بتاعة المستخدم الحالي بس
   const userOrders = orders.filter(order => order.userId === currentUser?.id).reverse();
 
   const openReviewModal = (order, item) => {
@@ -35,13 +36,18 @@ const HistoryPage = () => {
                     {new Date(order.createdAt).toLocaleString()}
                   </p>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  order.status === 'delivered' ? 'bg-green-100 text-success' :
-                  order.status === 'on-the-way' ? 'bg-blue-100 text-blue-600' :
-                  'bg-orange-100 text-warning'
-                }`}>
-                  {order.status.replace('-', ' ')}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
+                    order.status === 'delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                    order.status === 'on-the-way' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                    'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+                  }`}>
+                    {order.status === 'delivered' && <i className="fas fa-check-circle"></i>}
+                    {order.status === 'on-the-way' && <i className="fas fa-truck"></i>}
+                    {order.status === 'preparing' && <i className="fas fa-clock"></i>}
+                    {order.status.replace('-', ' ')}
+                  </span>
+                </div>
               </div>
 
               <div className="mb-4">

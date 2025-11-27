@@ -1,4 +1,5 @@
 // src/components/ItemDetailsModal.jsx
+// مودال تفاصيل الصنف - يعرض المراجعات والتقييمات
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
 

@@ -1,4 +1,5 @@
 // src/components/CartDrawer.jsx
+// درج السلة - يعرض الأصناف اللي المستخدم اختارها
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAppContext } from '../context/AppContext';
@@ -6,12 +7,15 @@ import CheckoutModal from './CheckoutModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import usePortalRoot from '../hooks/usePortalRoot';
+import { getImagePath } from '../utils/imagePath';
 
+// درج السلة - يعرض الأصناف اللي المستخدم اختارها
 const CartDrawer = ({ isOpen, onClose }) => {
   const { cart, updateCartQuantity } = useAppContext();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const portalRoot = usePortalRoot();
 
+  // حساب الإجمالي
   const subtotal = cart.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
   const deliveryFee = 2.99;
   const total = subtotal + deliveryFee;
@@ -57,9 +61,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   {cart.map((item) => (
                     <div key={item.menuItem.id} className="mb-4 flex gap-3 rounded-lg border border-border-color/70 p-3 dark:border-slate-700">
                       <img
-                        src={item.menuItem.image}
+                        src={getImagePath(item.menuItem.image)}
                         alt={item.menuItem.name}
                         className="w-16 h-16 object-cover rounded"
+                        onError={(e) => {
+                          if (e.target.src && !e.target.src.includes('data:image')) {
+                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect fill="%23e5e7eb" width="64" height="64"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="10" dy="7" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                            e.target.alt = 'No Image';
+                          }
+                        }}
                       />
                       <div className="flex-1">
                         <div className="font-medium">{item.menuItem.name}</div>

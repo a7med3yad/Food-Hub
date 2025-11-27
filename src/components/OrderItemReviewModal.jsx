@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAppContext } from '../context/AppContext';
 import usePortalRoot from '../hooks/usePortalRoot';
+import { getImagePath } from '../utils/imagePath';
 
 const OrderItemReviewModal = ({ isOpen, order, item, onClose }) => {
   const { submitReview, showToast, currentUser } = useAppContext();
@@ -21,7 +22,7 @@ const OrderItemReviewModal = ({ isOpen, order, item, onClose }) => {
     }
   }, [isOpen]);
 
-  if (!isOpen || !order || !item || !portalRoot || order.status !== 'delivered') return null;
+  if (!isOpen || !order || !item || !portalRoot) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -75,9 +76,15 @@ const OrderItemReviewModal = ({ isOpen, order, item, onClose }) => {
         <div className="space-y-6 p-6 text-text-dark dark:text-slate-100">
           <div className="flex items-center gap-4">
             <img
-              src={item.menuItem.image}
+              src={getImagePath(item.menuItem.image)}
               alt={item.menuItem.name}
               className="w-20 h-20 rounded-xl object-cover"
+              onError={(e) => {
+                if (e.target.src && !e.target.src.includes('data:image')) {
+                  e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect fill="%23e5e7eb" width="80" height="80"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="10" dy="7" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                  e.target.alt = 'No Image';
+                }
+              }}
             />
             <div>
               <div className="text-sm text-text-gray dark:text-slate-400">Delivered on</div>

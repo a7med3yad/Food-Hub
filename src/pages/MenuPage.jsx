@@ -1,4 +1,5 @@
 // src/pages/MenuPage.jsx
+// صفحة عرض قائمة المطعم
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
@@ -13,32 +14,37 @@ const MenuPage = () => {
     setSelectedCategory,
     showToast,
     getRestaurantRating
-  } = useAppContext(); // 👈 ده hook — لازم يكون في الأول
+  } = useAppContext();
 
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 👇 كل الـ useMemo وباقي الـ logic يفضل بعد الـ hooks مباشرة، من غير أي if قبلهم
+  // بنلاقي المطعم من الـ ID
   const restaurant = restaurants.find(r => r.id === restaurantId);
 
-  // لا تستخدم useAppContext() تاني هنا — خذ الدالة من فوق
+  // بنحسب التقييم المتوسط للمطعم
   const { average: restAvg, count: restCount } = restaurant
     ? getRestaurantRating(restaurant.id)
     : { average: 0, count: 0 };
 
+  // بنجيب الفئات بتاعة المطعم
   const categories = restaurant ? ['all', ...restaurant.categories] : [];
+  // بنفلتر الأصناف اللي بتاعة المطعم ده بس
   const menuItemsForRestaurant = restaurant
     ? menuItems.filter(item => item.restaurantId === restaurant.id)
     : [];
 
+  // بنفلتر الأصناف حسب الفئة والبحث
   const filteredItems = useMemo(() => {
     if (!restaurant) return [];
     let items = menuItemsForRestaurant;
 
+    // لو في فئة محددة، بنفلتر بيها
     if (selectedCategory !== 'all') {
       items = items.filter(item => item.category === selectedCategory);
     }
 
+    // لو في بحث، بنفلتر بالاسم أو الوصف
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       items = items.filter(item =>
@@ -50,7 +56,7 @@ const MenuPage = () => {
     return items;
   }, [menuItemsForRestaurant, selectedCategory, searchQuery, restaurant]);
 
-  // 👇 التحقق من وجود المطعم نشتغله هنا في useEffect
+  // لو المطعم مش موجود، بنرجع للصفحة الرئيسية
   useEffect(() => {
     if (!restaurant) {
       showToast('Restaurant not found', 'error');
@@ -58,7 +64,6 @@ const MenuPage = () => {
     }
   }, [restaurant, navigate, showToast]);
 
-  // إذا المطعم مش موجود، متجيبش يعرض حاجة (بس بعد ما خلصت كل الـ hooks)
   if (!restaurant) {
     return null;
   }

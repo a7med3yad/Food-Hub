@@ -67,14 +67,17 @@ const OrderHistoryModal = ({ isOpen, onClose }) => {
                       </p>
                     </div>
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
                         order.status === 'delivered'
-                          ? 'bg-green-100 text-success'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                           : order.status === 'on-the-way'
-                            ? 'bg-blue-100 text-blue-600'
-                            : 'bg-orange-100 text-warning'
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                            : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
                       }`}
                     >
+                      {order.status === 'delivered' && <i className="fas fa-check-circle"></i>}
+                      {order.status === 'on-the-way' && <i className="fas fa-truck"></i>}
+                      {order.status === 'preparing' && <i className="fas fa-clock"></i>}
                       {order.status.replace('-', ' ')}
                     </span>
                   </div>

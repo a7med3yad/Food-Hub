@@ -13,7 +13,7 @@ import Toast from './components/Toast';
 function App() {
   return (
     <AppProvider>
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <div className="min-h-screen bg-bg-gray transition-colors dark:bg-slate-950">
           <Header />
           <main className="pb-16">

@@ -1,4 +1,5 @@
 // src/components/CheckoutModal.jsx
+// مودال الدفع - المستخدم بيدخل العنوان ورقم التليفون
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAppContext } from '../context/AppContext';
@@ -12,6 +13,7 @@ const CheckoutModal = ({ isOpen, onClose }) => {
   const [errors, setErrors] = useState({});
   const portalRoot = usePortalRoot();
 
+  // حساب الإجمالي
   const subtotal = cart.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
   const deliveryFee = 2.99;
   const total = subtotal + deliveryFee;
@@ -25,6 +27,7 @@ const CheckoutModal = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  // دالة إرسال الطلب
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedRestaurant) {
@@ -37,19 +40,23 @@ const CheckoutModal = ({ isOpen, onClose }) => {
 
     const newErrors = {};
 
-    if (!trimmedAddress || /^\d+$/.test(trimmedAddress)) {
-      newErrors.address = 'Please enter a valid address';
+    // التحقق من العنوان - لازم يكون فيه حروف مش أرقام بس
+    if (!trimmedAddress || trimmedAddress.length < 10) {
+      newErrors.address = 'Please enter a valid address (at least 10 characters)';
     }
 
-    if (!/^\d+$/.test(trimmedPhone)) {
-      newErrors.phone = 'Phone number should contain digits only';
+    // التحقق من رقم التليفون - لازم يكون أرقام بس وطول معقول
+    if (!trimmedPhone || !/^\d{10,15}$/.test(trimmedPhone)) {
+      newErrors.phone = 'Please enter a valid phone number (10-15 digits)';
     }
 
+    // لو في أخطاء، بنوقف هنا
     if (Object.keys(newErrors).length) {
       setErrors(newErrors);
       return;
     }
 
+    // لو كل حاجة تمام، بنعمل الطلب
     setErrors({});
     const orderData = {
       address: trimmedAddress,

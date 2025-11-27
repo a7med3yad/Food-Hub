@@ -1,4 +1,5 @@
 // src/components/AuthModal.jsx
+// مودال تسجيل الدخول والتسجيل
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -8,11 +9,11 @@ import usePortalRoot from '../hooks/usePortalRoot';
 const AuthModal = ({ isOpen, onClose, standalone = false }) => {
   const { handleLogin } = useAppContext();
   const navigate = useNavigate();
-  const [authMode, setAuthMode] = useState('login');
+  const [authMode, setAuthMode] = useState('login'); // 'login' أو 'signup'
   const [name, setName] = useState('');
-  const [role, setRole] = useState('customer');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('customer');
   const portalRoot = usePortalRoot();
 
   useEffect(() => {
@@ -27,20 +28,24 @@ const AuthModal = ({ isOpen, onClose, standalone = false }) => {
 
   if (!standalone && (!isOpen || !portalRoot)) return null;
 
+  // دالة إرسال الفورم
   const handleSubmit = (e) => {
     e.preventDefault();
+    // بنبعت البيانات حسب نوع الـ mode
     const payload = authMode === 'login'
       ? { email, password }
       : { email, password, name, role };
 
     const loggedInUser = handleLogin(payload);
 
+    // لو الـ admin، بنروح لصفحة الـ admin
     if (loggedInUser?.role === 'admin') {
       navigate('/admin');
     } else if (standalone) {
       navigate('/');
     }
 
+    // لو مش standalone، بنقفل المودال
     if (!standalone) {
       onClose?.();
     }
@@ -80,7 +85,8 @@ const AuthModal = ({ isOpen, onClose, standalone = false }) => {
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full rounded-lg border border-border-color bg-white p-3 text-text-dark dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                className="w-full rounded-lg border border-border-color bg-transparent p-3 dark:border-slate-700"
+                required
               >
                 <option value="customer">Customer</option>
                 <option value="admin">Admin</option>
