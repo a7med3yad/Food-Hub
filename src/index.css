@@ -1,0 +1,68 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  color: #1f2937;
+  background-color: #f9fafb;
+  line-height: 1.6;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+body.dark-body {
+  background-color: #020617;
+  color: #e2e8f0;
+}
+
+body.dark-body .bg-white {
+  background-color: #0f172a !important;
+  color: #e2e8f0;
+}
+
+body.dark-body .bg-bg-gray {
+  background-color: #0b1727 !important;
+}
+
+body.dark-body .text-text-dark {
+  color: #f8fafc !important;
+}
+
+body.dark-body .text-text-gray {
+  color: #94a3b8 !important;
+}
+
+body.dark-body .text-text-light {
+  color: #64748b !important;
+}
+
+body.dark-body .border-border-color {
+  border-color: #1f2937 !important;
+}
+
+body.dark-body .shadow-sm,
+body.dark-body .shadow,
+body.dark-body .shadow-lg {
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.65) !important;
+}
+
+/* Custom utilities */
+.text-center {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
