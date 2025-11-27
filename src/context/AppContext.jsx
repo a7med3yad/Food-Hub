@@ -161,9 +161,13 @@ export const AppProvider = ({ children }) => {
   };
 
   const handleLogout = () => {
+    // بنمسح الـ state الأول
     setCurrentUser(null);
     setCart([]);
+    // بنمسح من localStorage
     localStorage.removeItem('foodhub-user');
+    localStorage.removeItem('foodhub-cart');
+    // بنعرض رسالة النجاح
     showToast('Logged out successfully', 'success');
   };
 

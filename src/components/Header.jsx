@@ -92,8 +92,16 @@ const Header = () => {
             <button
               className="rounded-lg bg-text-dark px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-black"
               onClick={() => {
+                // بنعمل logout الأول
                 handleLogout();
-                navigate('/');
+                // لو كان في صفحة الـ admin أو history، لازم نخرج منها
+                const currentPath = window.location.pathname;
+                if (currentPath.includes('/admin') || currentPath.includes('/history')) {
+                  // بنستخدم setTimeout عشان نضمن إن الـ state اتحدث
+                  setTimeout(() => {
+                    navigate('/', { replace: true });
+                  }, 50);
+                }
               }}
             >
               Logout

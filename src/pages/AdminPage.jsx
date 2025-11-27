@@ -7,30 +7,9 @@ const AdminPage = () => {
   const { orders, setOrders, showToast, currentUser, isAuthReady, reviews, restaurants } = useAppContext();
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isChecking, setIsChecking] = useState(true);
 
-  useEffect(() => {
-    if (!isAuthReady) return;
-    if (!currentUser || currentUser.role !== 'admin') {
-      showToast('Admins only', 'error');
-      navigate('/');
-    }
-  }, [currentUser, isAuthReady, navigate, showToast]);
-
-  if (!isAuthReady) {
-    return null;
-  }
-
-  if (!currentUser || currentUser.role !== 'admin') {
-    return null;
-  }
-
-  // حساب الإحصائيات
-  const totalOrders = orders.length;
-  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-  const pendingOrders = orders.filter(o => o.status === 'preparing').length;
-  const onTheWayOrders = orders.filter(o => o.status === 'on-the-way').length;
-  const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
-
+  // لازم كل الـ hooks تكون في الأول قبل أي return
   // فلترة الطلبات حسب الحالة
   const filteredOrders = useMemo(() => {
     if (statusFilter === 'all') return orders;
@@ -53,6 +32,61 @@ const AdminPage = () => {
     });
     return Object.values(stats).sort((a, b) => b.revenue - a.revenue);
   }, [orders]);
+
+  // بنتحقق من الـ authentication بعد ما الـ context يجهز
+  useEffect(() => {
+    if (!isAuthReady) {
+      setIsChecking(true);
+      return;
+    }
+
+    setIsChecking(false);
+
+    // لو مش admin، بنرجع للصفحة الرئيسية
+    if (!currentUser || currentUser.role !== 'admin') {
+      // لو الـ user عمل logout، مش لازم نعرض toast
+      if (currentUser === null) {
+        navigate('/', { replace: true });
+      } else {
+        showToast('Admins only', 'error');
+        navigate('/', { replace: true });
+      }
+    }
+  }, [currentUser, isAuthReady, navigate, showToast]);
+
+  // حساب الإحصائيات
+  const totalOrders = orders.length;
+  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+  const pendingOrders = orders.filter(o => o.status === 'preparing').length;
+  const onTheWayOrders = orders.filter(o => o.status === 'on-the-way').length;
+  const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
+
+  // لو لسه بنتحقق، بنعرض loading
+  if (isChecking || !isAuthReady) {
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-orange mx-auto mb-4"></div>
+            <p className="text-text-gray dark:text-slate-400">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // لو مش admin بعد ما الـ auth جهز، بنعرض redirecting (الـ redirect هيحصل في الـ useEffect)
+  if (!currentUser || currentUser.role !== 'admin') {
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <p className="text-text-gray dark:text-slate-400">Redirecting...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // دالة تغيير حالة الطلب
   const handleStatusChange = (orderId, newStatus) => {
