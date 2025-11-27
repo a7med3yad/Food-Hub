@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 
 const AdminPage = () => {
-  const { orders, setOrders, showToast, currentUser, isAuthReady, reviews, restaurants } = useAppContext();
+  const { orders, setOrders, showToast, currentUser, isAuthReady, reviews } = useAppContext();
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('all');
   const [isChecking, setIsChecking] = useState(true);
@@ -58,7 +58,6 @@ const AdminPage = () => {
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const pendingOrders = orders.filter(o => o.status === 'preparing').length;
-  const onTheWayOrders = orders.filter(o => o.status === 'on-the-way').length;
   const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
 
   // لو لسه بنتحقق، بنعرض loading

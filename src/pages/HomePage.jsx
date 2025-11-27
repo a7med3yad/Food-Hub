@@ -6,7 +6,7 @@ import { useAppContext } from '../context/AppContext';
 import RestaurantCard from '../components/RestaurantCard';
 
 const HomePage = () => {
-  const { restaurants, setSelectedRestaurant, showToast } = useAppContext();
+  const { restaurants, setSelectedRestaurant } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 

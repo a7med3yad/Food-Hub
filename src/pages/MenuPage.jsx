@@ -29,15 +29,12 @@ const MenuPage = () => {
 
   // بنجيب الفئات بتاعة المطعم
   const categories = restaurant ? ['all', ...restaurant.categories] : [];
-  // بنفلتر الأصناف اللي بتاعة المطعم ده بس
-  const menuItemsForRestaurant = restaurant
-    ? menuItems.filter(item => item.restaurantId === restaurant.id)
-    : [];
 
   // بنفلتر الأصناف حسب الفئة والبحث
   const filteredItems = useMemo(() => {
     if (!restaurant) return [];
-    let items = menuItemsForRestaurant;
+    // بنفلتر الأصناف اللي بتاعة المطعم ده بس
+    let items = menuItems.filter(item => item.restaurantId === restaurant.id);
 
     // لو في فئة محددة، بنفلتر بيها
     if (selectedCategory !== 'all') {
@@ -54,7 +51,7 @@ const MenuPage = () => {
     }
 
     return items;
-  }, [menuItemsForRestaurant, selectedCategory, searchQuery, restaurant]);
+  }, [menuItems, selectedCategory, searchQuery, restaurant]);
 
   // لو المطعم مش موجود، بنرجع للصفحة الرئيسية
   useEffect(() => {

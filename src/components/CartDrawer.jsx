@@ -1,16 +1,14 @@
 // src/components/CartDrawer.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import CheckoutModal from './CheckoutModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const CartDrawer = () => {
-  const { cart, updateCartQuantity, currentUser } = useAppContext();
+  const { cart, updateCartQuantity } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const navigate = useNavigate();
 
   const subtotal = cart.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
   const deliveryFee = 2.99;
