@@ -43,9 +43,12 @@ const Header = () => {
             alt="FoodHub Logo"
             className="h-10 w-10 object-contain transition-transform group-hover:scale-110"
           />
-          <div className="text-2xl font-bold tracking-tight">
+          <div className="text-2xl font-bold tracking-tight flex items-center">
             <span className="text-text-dark dark:text-white transition-colors">Food</span>
-            <span className="text-primary-orange">Hub</span>
+            <span className="text-text-dark dark:text-white transition-colors relative ml-0.5">
+              Hub
+              <span className="absolute -bottom-1 left-0 w-full h-1 bg-primary-orange-dark rounded-full"></span>
+            </span>
           </div>
         </div>
 
