@@ -67,15 +67,17 @@ const MenuPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-6 text-text-dark dark:text-white">
+      {/* Back to Restaurants Button - Icon Only with Neon Effect */}
       <button
         onClick={() => navigate('/')}
-        className="mb-6 inline-flex items-center gap-2 rounded-full border border-border-color bg-white px-4 py-2 text-sm font-medium text-text-dark shadow-sm transition hover:border-primary-orange hover:text-primary-orange dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100"
+        className="mb-6 group relative flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 border-border-color text-text-gray bg-white hover:border-primary-orange hover:bg-primary-orange/5 hover:text-primary-orange hover:shadow-md dark:border-slate-400 dark:bg-slate-700 dark:text-white dark:shadow-[0_0_10px_rgba(255,255,255,0.1)] dark:hover:border-primary-orange dark:hover:bg-slate-600 dark:hover:text-primary-orange dark:hover:shadow-[0_0_15px_rgba(249,115,22,0.6)]"
+        aria-label="Back to Restaurants"
+        title="Back to Restaurants"
       >
-        <i className="fas fa-arrow-left text-xs"></i>
-        <span>Back to Restaurants</span>
+        <i className="fas fa-arrow-left text-lg transition-transform duration-300 group-hover:-translate-x-1"></i>
       </button>
 
-      <div className="mb-6 rounded-xl bg-white p-5 shadow-sm dark:bg-slate-900/70">
+      <div className="mb-6 rounded-xl bg-white p-5 shadow-sm dark:bg-slate-900/70 dark:border dark:border-slate-800">
         <h1 className="mb-2 text-2xl font-bold text-text-dark dark:text-white">{restaurant.name}</h1>
         <p className="mb-3 text-text-gray dark:text-slate-300">{restaurant.description}</p>
         <div className="flex gap-4 text-sm text-text-gray dark:text-slate-300">
@@ -89,7 +91,7 @@ const MenuPage = () => {
         <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 transform text-text-gray"></i>
         <input
           type="text"
-          className="w-full rounded-lg border border-border-color bg-white/80 pl-10 pr-4 py-2 text-text-dark transition focus:border-primary-orange focus:outline-none dark:border-slate-700 dark:bg-slate-900/70 dark:text-white"
+          className="w-full rounded-lg border border-border-color bg-white/80 pl-10 pr-4 py-2 text-text-dark transition focus:border-primary-orange focus:outline-none dark:border-slate-700 dark:bg-slate-900/70 dark:text-white dark:focus:border-primary-orange dark:focus:shadow-[0_0_10px_rgba(249,115,22,0.2)]"
           placeholder="Search menu items..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -101,11 +103,10 @@ const MenuPage = () => {
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap font-medium transition ${
-              selectedCategory === cat
-                ? 'bg-primary-orange text-white'
-                : 'bg-white border border-border-color text-text-dark hover:bg-bg-gray dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100'
-            }`}
+            className={`px-4 py-2 rounded-lg whitespace-nowrap font-medium transition-all duration-300 ${selectedCategory === cat
+                ? 'bg-primary-orange text-white shadow-lg shadow-primary-orange/30'
+                : 'bg-white border border-border-color text-text-dark hover:bg-bg-gray dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-primary-orange/50'
+              }`}
           >
             {cat.charAt(0).toUpperCase() + cat.slice(1)}
           </button>
